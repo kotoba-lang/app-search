@@ -1,0 +1,94 @@
+{
+  "@context": "https://1.etzhayyim.com/project",
+  "@type": "Project",
+  "name": "etzhayyim-project-search",
+  "description": "Etzhayyim Search — RisingWave IVF/IVF+PQ web and multimodal search for humans and AI agents/LLMs",
+  "category": "etzhayyim-project-platform",
+  "components": {
+    "app": {
+      "appId": "etzhayyim-search",
+      "tier": "event-driven",
+      "stack": "go",
+      "keda": true,
+      "routes": [
+        {
+          "host": "search.etzhayyim.com",
+          "paths": [
+            "/api/"
+          ]
+        }
+      ]
+    },
+    "ui": {
+      "appId": "search-ui",
+      "tier": "static",
+      "stack": "sveltekit",
+      "routes": [
+        {
+          "host": "search.etzhayyim.com",
+          "paths": [
+            "/"
+          ]
+        }
+      ]
+    }
+  },
+  "searchBackend": {
+    "@type": "SoftwareApplication",
+    "primaryStore": "RisingWave",
+    "annStrategy": "IVF / IVF+PQ",
+    "primaryCorpusTables": [
+      "vertex_wet_chunk",
+      "vertex_wet_chunk_pq",
+      "vertex_pq_codebook"
+    ],
+    "embeddingTables": [
+      "vertex_vector_embedding_768"
+    ],
+    "trainingExportViews": [
+      "v_training_text",
+      "vertex_training_shard"
+    ],
+    "deprecatedBackends": [
+      "lancedb-api",
+      "tonbo"
+    ]
+  },
+  "rdfUnifiedDocuments": {
+    "@type": "Dataset",
+    "name": "Unified top-level RDF/JSON-LD documents",
+    "description": "Consolidated from project top-level *.jsonld files except PROJECT.jsonld.",
+    "documents": [
+      {
+        "fileName": "scheduler.jsonld",
+        "content": {
+          "@context": [
+            "https://schema.org/",
+            {
+              "etzhayyim": "https://etzhayyim.com/schemas/",
+              "capabilities": "etzhayyim:capabilities",
+              "survivalIndicators": "etzhayyim:survivalIndicators",
+              "scheduler": "etzhayyim:scheduler",
+              "milestones": "etzhayyim:milestones",
+              "blockers": "etzhayyim:blockers",
+              "dependsOn": {
+                "@id": "etzhayyim:dependsOn",
+                "@type": "@id"
+              },
+              "ingestKey": "etzhayyim:ingestKey",
+              "window": "etzhayyim:window",
+              "valueUpdatedAt": "etzhayyim:valueUpdatedAt"
+            }
+          ],
+          "@type": "CreativeWork",
+          "name": "etzhayyim-project-search Scheduler",
+          "identifier": "etzhayyim-project-search/scheduler",
+          "description": "Project schedule (milestones) and blockers.",
+          "dateCreated": "2026-02-15T04:25:26+00:00",
+          "milestones": [],
+          "blockers": []
+        }
+      }
+    ]
+  }
+}

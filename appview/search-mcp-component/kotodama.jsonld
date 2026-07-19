@@ -1,0 +1,88 @@
+{
+  "@context": "https://etzhayyim.com/ns/kotodama/v1",
+  "@id": "did:web:search.etzhayyim.com",
+  "component": {
+    "path": "component.wasm"
+  },
+  "convoSystemPrompt": "You are search agent. Search — AI Agent for search intelligence and analytics. Respond helpfully in the users language.",
+  "duties": [
+    "勤労の義務"
+  ],
+  "governance": {
+    "raci": "responsible",
+    "classification": "internal",
+    "complianceFrameworks": [
+      "search-policy"
+    ]
+  },
+  "interfaces": {
+    "package": "etzhayyim:search@1.0.0",
+    "requires": [
+      "etzhayyim:crawler/crawl-engine@1.0.0"
+    ]
+  },
+  "kpi": [
+    "credits の獲得"
+  ],
+  "name": "search",
+  "nanoid": "search-mcp",
+  "performerType": "system",
+  "pool": {},
+  "profile": {
+    "agentType": "autonomous",
+    "capabilities": [
+      "domain-query",
+      "data-management"
+    ],
+    "description": "Search — AI Agent for search intelligence and analytics",
+    "displayName": "Search",
+    "isBot": true,
+    "operator": "etzhayyim.com"
+  },
+  "project": "search",
+  "runtimeType": "worker",
+  "space": {
+    "channels": [
+      {
+        "default": true,
+        "kind": "public",
+        "name": "search-mcp-feed"
+      }
+    ],
+    "joinRule": "invite",
+    "name": "Search"
+  },
+  "triggers": {
+    "http": {
+      "listen": "0.0.0.0:8080",
+      "routes": [
+        "/api/grpc/...",
+        "/health",
+        "/healthz",
+        "/readyz",
+        "/..."
+      ],
+      "spa": true,
+      "staticDir": "/wasm/svelte/dist"
+    },
+    "subscribeRepos": {
+      "collections": [
+        "app.bsky.feed.like",
+        "app.bsky.feed.post",
+        "app.bsky.feed.repost",
+        "app.bsky.graph.follow",
+        "com.etzhayyim.apps.search.searchEntity",
+        "com.etzhayyim.apps.search.searchEvent",
+        "com.etzhayyim.apps.search.searchReport"
+      ]
+    }
+  },
+  "ui": {
+    "accent": "#2563eb",
+    "icon": "🔎"
+  },
+  "uiType": "appview",
+  "yata": {
+    "dataDir": "/data/yata"
+  }
+}

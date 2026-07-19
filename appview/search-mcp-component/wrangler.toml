@@ -1,0 +1,37 @@
+name = "kotodama-search"
+main = "worker.ts"
+compatibility_date = "2026-03-19"
+compatibility_flags = ["nodejs_compat"]
+
+workers_dev = false
+
+[observability]
+enabled = true
+
+[vars]
+APP_VERSION = "0.2.0"
+APP_TEMPLATE = "miniapp"
+APP_SOURCE = "custom"
+SPIN_VARIABLE_PERFORMER_ID = "search-mcp"
+
+[[services]]
+binding = "PDS_SERVICE"
+service = "kotodama-pds"
+
+[[r2_buckets]]
+binding = "CDN_R2"
+bucket_name = "etzhayyim-graph"
+
+[durable_objects]
+bindings = [
+  { name = "KOTODAMA", class_name = "KotodamaContainer" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["KotodamaContainer"]
+
+[[migrations]]
+tag = "v2"
+renamed_classes = [{from = "KotodamaContainer", to = "KotodamaContainerLegacy"}]
+new_sqlite_classes = ["KotodamaContainer"]

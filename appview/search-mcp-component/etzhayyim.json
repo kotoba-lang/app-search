@@ -1,0 +1,7 @@
+{
+  "name": "search",
+  "nanoid": "search-mcp",
+  "project": "search",
+  "type": "web",
+  "runtime": "worker"
+}
