@@ -22,7 +22,7 @@
     "ui": {
       "appId": "search-ui",
       "tier": "static",
-      "stack": "sveltekit",
+      "stack": "cljs-reagent-re-frame-jp-go-dds",
       "routes": [
         {
           "host": "search.etzhayyim.com",
