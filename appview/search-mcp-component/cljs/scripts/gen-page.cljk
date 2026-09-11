@@ -5,7 +5,7 @@
   kami-app-daw's `scripts/gen-page.cljs`, and app-docs' / app-forms'
   `cljs/scripts/gen-page.cljs`).
 
-  Run:   nbb --classpath \"$(clojure -Spath)\" scripts/gen-page.cljs
+  Run:   kbb --backend sci --classpath \"$(kbb -Spath)\" scripts/gen-page.cljs
   Check: same, with --check (exit 1 if the committed file is stale)"
   (:require ["node:fs" :as fs]
             ["node:process" :as process]
@@ -48,7 +48,7 @@
 
       check?
       (do (println "STALE:" out-path "differs from its generator.")
-          (println "Run: nbb --classpath \"$(clojure -Spath)\" scripts/gen-page.cljs")
+          (println "Run: kbb --backend sci --classpath \"$(kbb -Spath)\" scripts/gen-page.cljs")
           (process/exit 1))
 
       :else
