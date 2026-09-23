@@ -48,7 +48,7 @@
 
       check?
       (do (println "STALE:" out-path "differs from its generator.")
-          (println "Run: kbb --backend sci --classpath \"$(kbb -Spath)\" scripts/gen-page.cljs")
+          (println "Run: kbb --backend sci --classpath \"$(kbb -Spath)\" scripts/gen-page.cljk")
           (process/exit 1))
 
       :else
