@@ -3,7 +3,7 @@
   `jp-go-dds.page/->page`, so the shipped page tracks the design system
   instead of a hand-written snapshot of it (same pattern as kami-app-nle /
   kami-app-daw's `scripts/gen-page.cljs`, and app-docs' / app-forms'
-  `cljs/scripts/gen-page.cljs`).
+  `cljs/scripts/gen-page.cljk`).
 
   Run:   kbb --backend sci --classpath \"$(kbb -Spath)\" scripts/gen-page.cljk
   Check: same, with --check (exit 1 if the committed file is stale)"
