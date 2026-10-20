@@ -1,0 +1,18 @@
+;; app-search — itonami（dapp）の aiueos アプリ記述子（notes.edn 形）。
+;; 判定コアは aiueos/search_path.cljk（検索経路の admissibility）。
+;; 正本は AGENTS.md「Backend Direction」の運用ルール（Runbook = SSoT）。
+;; pure（:effects #{}）。
+{:aiueos/component :app/search-path
+ :aiueos/kind :app
+ :aiueos/trust :untrusted
+ :aiueos/source "search_path.cljk"
+ :aiueos/wasm "search_path.wasm"
+ :aiueos/entry "main"
+ :aiueos/args []
+ :aiueos/imports #{}
+ :aiueos/exports #{:app/main
+                   :app/path-class
+                   :app/corpus-ok
+                   :app/path-judgment}
+ :aiueos/effects #{}
+ :aiueos/limits {:memory-pages 16 :fuel 5000000}}

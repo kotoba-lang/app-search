@@ -1,0 +1,20 @@
+(ns search-mcp.path-parity-test
+  "aiueos/search_path.cljk（判定コア）と AGENTS.md「Backend Direction」の
+  規則の parity。Runbook が SSoT なので、規則が変わればこの検査が落ちる。"
+  (:require [clojure.test :refer [deftest is testing]]
+            [clojure.string :as str]
+            ["fs" :as fs]))
+
+(def runbook (fs/readFileSync "AGENTS.md" "utf8"))
+
+(deftest runbook-rules-match-guest
+  (testing "guest test-primary: primary は RisingWave の IVF / IVF+PQ"
+    (is (str/includes? runbook "IVF / IVF+PQ")))
+  (testing "guest test-deprecated: LanceDB / Tonbo は deprecated、新規経路へ戻さない"
+    (is (str/includes? runbook "deprecated"))
+    (is (str/includes? runbook "新規経路へ戻さない")))
+  (testing "guest test-compat: Cypher は互換説明のみ、primary にしない"
+    (is (str/includes? runbook "primary path にはしない")))
+  (testing "guest test-corpus: corpus は vertex_wet_chunk / etzhayyim-mm-768"
+    (is (str/includes? runbook "vertex_wet_chunk"))
+    (is (str/includes? runbook "etzhayyim-mm-768"))))
