@@ -1,0 +1,82 @@
+(ns search.path
+  "search 経路判定コア — itonami dapp bundle（pure, :effects #{}）。
+
+  検索バックエンドの経路 admissibility の判定（正本: この repo の
+  AGENTS.md「Backend Direction」の運用ルール —— Runbook が SSoT）:
+
+  - **primary は RisingWave 上の IVF / IVF+PQ**。primary corpus は
+    vertex_wet_chunk、汎用 768d は vertex_vector_embedding_768
+    （space_id = etzhayyim-mm-768）。
+  - **旧 LanceDB / Tonbo API は deprecated —— 新規経路へ戻さない**（拒否）。
+  - 旧 Kotodama graph/Cypher の :Page / LINKS_TO 検索は**互換説明としてのみ
+    残し、primary path にはしない**。
+
+  path-class の戻り: 0 = 未知（拒否）/ 1 = primary（IVF / IVF+PQ）
+    / 2 = deprecated（LanceDB / Tonbo）/ 3 = compat-only（Cypher）
+  corpus-ok: 1 = 宣言どおりの corpus（wet-chunk / mm-768）
+  path-judgment のエラービット（0 = 規則どおり）:
+    1 :deprecated-route   deprecated 経路を使う
+    2 :compat-as-primary  compat-only 経路を primary に使う
+    4 :unknown-path       未知の経路
+    8 :bad-corpus         corpus が閉じた集合の外
+
+  実行 host はスカラーのみ = KIR v3 / i64/direct ABI（kernel/selfhost 両対応）。
+
+  テストはゼロ引数 test-*、戻り 1/0:
+  <amu> test aiueos/search_path.cljk"
+  (:export [main path-class corpus-ok path-judgment
+            test-primary test-deprecated test-compat test-unknown
+            test-corpus test-judgment test-fail-closed]))
+
+(defn main [] :i64
+  0)
+
+(defn path-class [is-ivf :i64 is-lancedb :i64 is-tonbo :i64 is-cypher :i64] :i64
+  ;; deprecated が最優先で検出（fail closed）
+  (if (or (= is-lancedb 1) (= is-tonbo 1))
+    2
+    (if (= is-ivf 1)
+      1
+      (if (= is-cypher 1) 3 0))))
+
+(defn corpus-ok [corpus-code :i64] :i64
+  ;; 0 = vertex_wet_chunk（primary text/web）、1 = vertex_vector_embedding_768
+  (if (and (>= corpus-code 0) (<= corpus-code 1)) 1 0))
+
+(defn- denied [ok :i64 bit :i64] :i64
+  (if (= ok 1) 0 bit))
+
+(defn path-judgment [class-code :i64 as-primary :i64 corpus-code :i64] :i64
+  (+ (if (= class-code 2) 1 0)
+     (if (and (= class-code 3) (= as-primary 1)) 2 0)
+     (if (= class-code 0) 4 0)
+     (denied (corpus-ok corpus-code) 8)))
+
+;; --- tests（戻り 1 = pass） ------------------------------------------------
+
+(defn test-primary [] :i64
+  (if (= (path-class 1 0 0 0) 1) 1 0))
+
+(defn test-deprecated [] :i64
+  ;; LanceDB / Tonbo は拒否（IVF が混在しても deprecated が優先）
+  (if (= (+ (path-class 0 1 0 0) (path-class 0 0 1 0) (path-class 1 1 0 0)) 6) 1 0))
+
+(defn test-compat [] :i64
+  ;; Cypher は互換説明のみ
+  (if (= (path-class 0 0 0 1) 3) 1 0))
+
+(defn test-unknown [] :i64
+  (if (= (path-class 0 0 0 0) 0) 1 0))
+
+(defn test-corpus [] :i64
+  (if (= (+ (corpus-ok 0) (corpus-ok 1) (corpus-ok 2)) 2) 1 0))
+
+(defn test-judgment [] :i64
+  (if (= (path-judgment 1 1 0) 0) 1 0))
+
+(defn test-fail-closed [] :i64
+  ;; deprecated / compat-as-primary / unknown / bad-corpus が独立に立つ
+  (if (= (+ (path-judgment 2 0 0) (path-judgment 3 1 0)
+            (path-judgment 0 1 0) (path-judgment 1 0 5))
+         15)
+    1 0))
